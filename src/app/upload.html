@@ -21,6 +21,36 @@
       </section>
     </div>
 
+     <br>
+
+    <table *ngIf="data.length > 0" border="1">
+
+  <thead>
+    <tr>
+      <th>Folio</th>
+      <th>Fecha</th>
+      <th>Categoría</th>
+      <th>Monto</th>
+      <th>Estatus</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    <tr *ngFor="let item of data">
+
+      <td>{{ item.Folio }}</td>
+      <td>{{ item.Fecha }}</td>
+      <td>{{ item.Categoria }}</td>
+      <td>{{ item.Monto }}</td>
+      <td>{{ item.Estatus }}</td>
+
+    </tr>
+
+  </tbody>
+
+</table>
+
     <br />
   </div>
 </main>
