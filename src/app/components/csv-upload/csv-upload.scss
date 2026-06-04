@@ -1,6 +1,25 @@
-  .container {
+ .container {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+
   padding: 40px;
-  }
+}
+
+.analisys-section {
+  flex: 3;
+  min-width: 0;
+}
+
+csv-summary {
+  display: flex;
+  align-self: stretch;
+}
+
+.summary-section {
+  flex: 1;
+}
+
 
 
   main {

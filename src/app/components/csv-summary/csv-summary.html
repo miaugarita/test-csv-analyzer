@@ -1,4 +1,4 @@
-<div *ngIf="summary">
+<div *ngIf="summary" class="summary-section">
 
   <h3>Resumen</h3>
 
@@ -12,14 +12,12 @@
     {{ summary.totalAmount }}
   </p>
 
-  <h4>Por estatus</h4>
-
+  <strong>Por estatus</strong>
   <div *ngFor="let item of summary.byStatus | keyvalue">
     {{ item.key }}: {{ item.value }}
   </div>
 
-  <h4>Por categoría</h4>
-
+  <strong>Por categoría</strong>
   <div *ngFor="let item of summary.byCategory | keyvalue">
     {{ item.key }}: {{ item.value }}
   </div>

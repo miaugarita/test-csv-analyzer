@@ -76,6 +76,12 @@ export class CsvUploadComponent {
     // detener flujo si hay errores
     if (!validation.isValid) {
       this.data = [];
+      this.summary = {
+        totalRecords: 0,
+        totalAmount: 0,
+        byStatus: {},
+        byCategory: {}
+      };
       this.cdr.detectChanges();
       return;
     }
@@ -88,6 +94,7 @@ export class CsvUploadComponent {
     this.cdr.detectChanges();
   }
 
+  //llamar a funcion de summary en archivo de cvs-summary
   private generateSummary(): void {
 
     this.summary = {
@@ -111,6 +118,6 @@ export class CsvUploadComponent {
         (this.summary.byCategory[item.Categoria] || 0) + 1;
     });
 
-    console.log('RESUMEN',this.summary);
+
   }
 }
