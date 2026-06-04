@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import * as Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 
-import { DataTableValues , CsvValidationConfig , CsvValidationResult , } from '../models/model';
-
-
+import { DataTableValues, CsvValidationConfig, CsvValidationResult } from '../models/model';
 
 export enum EstatusEnum {
   Inactivo = 0,
   Activo = 1,
 }
 
-@Injectable({ providedIn: 'root',})
-export class CsvApiService {
+@Injectable({ providedIn: 'root' })
+export class CsValidatorService {
   //LEER CSV
   parseCsv(file: File): Promise<DataTableValues[]> {
     return new Promise((resolve) => {
@@ -26,28 +25,102 @@ export class CsvApiService {
     });
   }
 
+  parseXlsx(file: File): Promise<DataTableValues[]> {
+
+    return new Promise((resolve, reject) => {
+
+      const reader = new FileReader();
+
+      reader.onload = (event: any) => {
+
+        const data = new Uint8Array(event.target.result);
+
+        const workbook = XLSX.read(data, {
+          type: 'array'
+        });
+
+        const firstSheet =
+          workbook.SheetNames[0];
+
+        const worksheet =
+          workbook.Sheets[firstSheet];
+
+        const json = XLSX.utils.sheet_to_json<DataTableValues>(
+          worksheet,
+          {
+            defval: '',
+            raw: false,      // importante
+            blankrows: false // importante
+          }
+        );
+
+        resolve(json);
+      };
+
+      reader.onerror = reject;
+
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  async parseFile(file: File): Promise<DataTableValues[]> {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+
+    if (!extension) {
+      throw new Error('Archivo sin extensión');
+    }
+
+    const parsers: Record<string, () => Promise<DataTableValues[]>> = {
+      csv: () => this.parseCsv(file),
+      xlsx: () => this.parseXlsx(file),
+    };
+
+    const parser = parsers[extension];
+
+    if (!parser) {
+      throw new Error(`Formato no soportado: ${extension}`);
+    }
+
+    return parser();
+  }
+
   //FORMATO FECHA
-  private normalizeDate(value: string): string | null {
+  private normalizeDate(value: any): string | null {
     if (!value) return null;
 
-    const parts = value.split('/');
+    // CASO 1: si ya es Date
+    if (value instanceof Date) {
+      return isNaN(value.getTime())
+        ? null
+        : value.toISOString().split('T')[0];
+    }
 
-    // DD/MM/YYYY
-    if (parts.length === 3) {
-      const [day, month, year] = parts.map(Number);
-
-      const date = new Date(year, month - 1, day);
-
-      if (isNaN(date.getTime())) return null;
+    // CASO 2: número de Excel (serial date)
+    if (typeof value === 'number') {
+      const excelEpoch = new Date(1899, 11, 30);
+      const date = new Date(excelEpoch.getTime() + value * 86400000);
 
       return date.toISOString().split('T')[0];
     }
 
-    const date = new Date(value);
+    const str = String(value).trim();
 
-    if (isNaN(date.getTime())) return null;
+    // CASO 3: DD/MM/YYYY
+    if (str.includes('/')) {
+      const [day, month, year] = str.split('/').map(Number);
+      const date = new Date(year, month - 1, day);
 
-    return date.toISOString().split('T')[0];
+      return isNaN(date.getTime())
+        ? null
+        : date.toISOString().split('T')[0];
+    }
+
+    // CASO 4: ISO o cualquier parseable
+    const date = new Date(str);
+
+    return isNaN(date.getTime())
+      ? null
+      : date.toISOString().split('T')[0];
   }
 
   //VALIDAR ARCHIVO CSV
@@ -83,7 +156,7 @@ export class CsvApiService {
       if (!normalizedDate) {
         errors.push(`Fila ${rowNumber}: formato de fecha inválido (${fechaRaw})`);
       } else {
-        row.Fecha = normalizedDate;
+        const cleanRow = { ...row };
       }
 
       // duplicados

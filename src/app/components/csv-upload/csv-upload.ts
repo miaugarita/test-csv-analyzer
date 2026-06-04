@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 
-import { CsvApiService } from '../../services/csv-validator-service';
+import { CsValidatorService } from '../../services/csv-validator-service';
 import { CsvSummaryComponent } from '../csv-summary/csv-summary';
 import { DataTableValues } from '../../models/model';
 
@@ -39,7 +39,7 @@ export class CsvUploadComponent {
 
   //INYECTAR SERVICIO
   constructor(
-    private csvApiService: CsvApiService,
+    private CsValidatorService: CsValidatorService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -59,13 +59,13 @@ export class CsvUploadComponent {
 
     console.log('Procesando:', this.file.name);
 
-    //parsear CSV
-    const parsedData = await this.csvApiService.parseCsv(this.file);
+    //parsear archivo
+    const parsedData = await this.CsValidatorService.parseFile(this.file);
 
     console.log('Datos parseados:', parsedData);
 
-    //validar CSV
-    const validation = this.csvApiService.validateCsvData(parsedData, {
+    //validar archivo
+    const validation = this.CsValidatorService.validateCsvData(parsedData, {
       requiredFields: ['Folio', 'Fecha', 'Categoria', 'Monto', 'Estatus'],
       uniqueField: 'Folio',
       numericFields: ['Monto', 'Estatus'],

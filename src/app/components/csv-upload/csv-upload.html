@@ -1,13 +1,12 @@
 <main class="main">
   <div class="container">
      <div class="analisys-section">
-      <h3>CSV Analizador</h3>
-
+      <h3>Data Validator</h3>
       <br />
 
       <div class="upload-box">
         <section>
-          <input type="file" accept=".csv" hidden #fileInput (change)="onFileSelected($event)" />
+          <input type="file" accept=" .csv, .xlsx " hidden #fileInput (change)="onFileSelected($event)" />
           <p *ngIf="file">
             Archivo seleccionado:
             <i> {{ file.name }}</i>
@@ -22,8 +21,6 @@
           </div>
         </section>
       </div>
-
-
 
       <!--VALIDACIONES - convertir a componente-->
       <div class="errors-container" *ngIf="errors.length > 0">
@@ -90,8 +87,6 @@
         </table>
       </div>
     </div>
-
-    <br />
 
     <!--RESUMEN - componente html-->
     <csv-summary *ngIf="summary.totalRecords > 0" [summary]="summary"> </csv-summary>

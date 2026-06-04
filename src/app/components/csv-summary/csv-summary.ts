@@ -11,7 +11,6 @@ import { CsvSummary } from '../../models/csv-summary-model';
   styleUrl: './csv-summary.scss'
 })
 export class CsvSummaryComponent {
-
   @Input()
   summary!: CsvSummary;
 
