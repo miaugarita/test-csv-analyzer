@@ -1,0 +1,16 @@
+app/
+│
+├── components/
+│   ├── upload/
+│   ├── summary/
+│   └── validation-errors/
+│
+├── services/
+│   ├── file-parser.service.ts
+│   ├── validation.service.ts
+│   └── summary.service.ts
+│
+├── models.ts
+│
+├── app.component.ts
+└── app.config.ts

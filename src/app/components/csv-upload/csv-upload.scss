@@ -2,6 +2,14 @@
   padding: 40px;
   }
 
+  .contenedor-padre {
+  display: grid;
+  /* Divide el área en dos columnas (una de 1fr y otra de 3fr) y 1 fila */
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: 100vh;
+  gap: 16px; /* Espacio entre las áreas */
+}
+
   main {
     display: flex;
     justify-content: center;
@@ -53,6 +61,7 @@
 }
 
 .table-container {
+  padding: 16px;
   max-height: 300px;
   overflow-y: auto;
 }
